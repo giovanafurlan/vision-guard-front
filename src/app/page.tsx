@@ -1,19 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "./lib/firebaseConfig";
 import { sendSignInLinkToEmail } from "firebase/auth";
-import { Box, Button, Input, Text, Image, Heading, useToast } from "@chakra-ui/react";
+import { Box, Button, Input, Text, Image, useToast } from "@chakra-ui/react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const actionCodeSettings = {
-  url: "http://localhost:3000/", // Change to your actual domain
+  url: "http://localhost:3000/",
   handleCodeInApp: true,
 };
 
 export default function EmailConfirmationPage() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [token, setToken] = useState<string | null | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+  const router = useRouter();
+
+  const search = useSearchParams();
+  const apiKey = search.get("apiKey");
+
+  useEffect(() => {
+    console.log("apiKey", apiKey);
+    if (apiKey) {
+      localStorage.setItem("apiKey", apiKey);
+      router.push("/analytics");
+    }
+  }, []);
 
   const handleSendEmail = async () => {
     if (!email) {
@@ -44,16 +58,16 @@ export default function EmailConfirmationPage() {
   return (
     <Box
       display="flex"
+      flexDir="column"
       alignItems="center"
-      gap={4}
       justifyContent="center"
       height="100vh"
       bg="black"
+      color="white"
     >
-      <Image src="/images/logo.png" alt="Logo"/>
-      <Heading>Register</Heading>
-      <Box textAlign="center" p={6} borderRadius="md" boxShadow="lg" maxW="sm">
-        <Text fontSize="2xl" fontWeight="bold" mb={4}>
+      <Image src="/images/logo.png" alt="Logo" w="40" h="40" />
+      <Box p={6} borderRadius="md" boxShadow="lg" maxW="sm">
+        <Text fontSize="md" fontWeight="bold" mb={4}>
           Enter your email
         </Text>
         <Input
