@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { auth } from "./lib/firebaseConfig";
 import { sendSignInLinkToEmail } from "firebase/auth";
 import { Box, Button, Input, Text, Image, useToast } from "@chakra-ui/react";
@@ -11,7 +11,7 @@ const actionCodeSettings = {
   handleCodeInApp: true,
 };
 
-export default function EmailConfirmationPage() {
+function EmailConfirmationComponent() {
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -89,5 +89,13 @@ export default function EmailConfirmationPage() {
         </Button>
       </Box>
     </Box>
+  );
+}
+
+export default function EmailConfirmationPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EmailConfirmationComponent />
+    </Suspense>
   );
 }
