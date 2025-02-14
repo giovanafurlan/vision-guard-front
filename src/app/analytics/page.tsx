@@ -14,12 +14,11 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     const apiKey = localStorage.getItem("apiKey");
-    console.log("apiKey", apiKey);
     if (!apiKey) {
       toast({ title: "Please register your email", status: "error" });
       router.push("/");
     }
-  }, []);
+  }, [router, toast]);  
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
