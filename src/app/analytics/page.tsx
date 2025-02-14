@@ -28,34 +28,56 @@ export default function AnalyticsPage() {
     }
   };
 
+  const sendEmail = async (images: string[]) => {
+    const email = localStorage.getItem("userEmail");
+  
+    const response = await fetch("/api/send-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, images }),
+    });
+
+    if (response.ok) {
+      setContainSharpObject("block");
+    }
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Erro ao enviar email:", errorData);
+    }
+  };  
+
   const handleProcessVideo = async () => {
     if (!videoFile) {
       toast({ title: "Please select a video file", status: "warning" });
       return;
     }
-
+  
     setLoading(true);
-
     const formData = new FormData();
     formData.append("video", videoFile);
-
+  
     try {
-      const response = await fetch("/api/process-video", {
+      const response = await fetch("http://127.0.0.1:5001/process-video", {
         method: "POST",
         body: formData,
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to process video");
       }
-
+  
       const result = await response.json();
       toast({
         title: "Video processed successfully",
         description: result.message,
         status: "success",
       });
-      setContainSharpObject("block");
+    
+      sendEmail(result.images);
+  
     } catch (error: any) {
       toast({
         title: "Error processing video",
@@ -65,7 +87,7 @@ export default function AnalyticsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   return (
     <Box
@@ -78,10 +100,8 @@ export default function AnalyticsPage() {
       color="white"
       position="relative"
     >
-      {/* Overlay vermelho por cima do conteúdo */}
       <BlinkingOverlay display={containSharpObject}/>
 
-      {/* Card de input e botão */}
       <Box
         p={6}
         borderRadius="md"
@@ -107,7 +127,7 @@ export default function AnalyticsPage() {
           _hover={{ bg: "#c20546" }}
           width="full"
         >
-          Process Video
+          Process video
         </Button>
       </Box>
     </Box>

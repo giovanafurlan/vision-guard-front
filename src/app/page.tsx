@@ -13,21 +13,19 @@ const actionCodeSettings = {
 
 export default function EmailConfirmationPage() {
   const [email, setEmail] = useState<string>("");
-  const [token, setToken] = useState<string | null | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const router = useRouter();
 
   const search = useSearchParams();
-  const apiKey = search.get("apiKey");
+  const apiKey = search?.get("apiKey");
 
   useEffect(() => {
-    console.log("apiKey", apiKey);
-    if (apiKey) {
+    if (typeof window !== "undefined" && apiKey) {
       localStorage.setItem("apiKey", apiKey);
       router.push("/analytics");
     }
-  }, []);
+  }, [apiKey]);
 
   const handleSendEmail = async () => {
     if (!email) {
@@ -37,7 +35,9 @@ export default function EmailConfirmationPage() {
     setLoading(true);
     try {
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      localStorage.setItem("userEmail", email);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("userEmail", email);
+      }
       toast({
         title: "Confirmation email sent",
         description: "Check your inbox to confirm your email.",
@@ -85,7 +85,7 @@ export default function EmailConfirmationPage() {
           _hover={{ bg: "#c20546" }}
           width="full"
         >
-          Send Confirmation Email
+          Send confirmation email
         </Button>
       </Box>
     </Box>
