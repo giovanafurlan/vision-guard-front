@@ -7,7 +7,7 @@ import { Box, Button, Input, Text, Image, useToast } from "@chakra-ui/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const actionCodeSettings = {
-  url: "http://localhost:3000/",
+  url: "https://vision-guard-front.vercel.app/",
   handleCodeInApp: true,
 };
 
